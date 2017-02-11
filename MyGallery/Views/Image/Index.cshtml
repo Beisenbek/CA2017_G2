@@ -1,0 +1,9 @@
+﻿@model MyGallery.Models.BaseImage
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.name</h2>
+<img src=@Model.url alt=@Model.name/>

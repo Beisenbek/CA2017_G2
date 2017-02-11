@@ -1,0 +1,15 @@
+﻿@model MyGallery.Models.UploadedImage
+
+@using (Html.BeginForm("Upload", "Upload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="jumbotron">
+        <h3>Image Manipulator</h3>
+        <div>
+            <input name="uploadedFile" class="form-control" type="file" style="max-width: 800px; width:500px;" />
+        </div>
+        <button class="btn btn-primary" type="submit">Upload File</button>
+        <div class="well well-sm">
+           
+        </div>
+    </div>
+}
