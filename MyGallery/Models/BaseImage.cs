@@ -1,13 +1,20 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.Storage.Table;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
 namespace MyGallery.Models
 {
-    public class BaseImage
+    public class BaseImage : TableEntity
     {
-        public string url;
-        public string name;
+        public BaseImage()
+        {
+            this.PartitionKey = "image";
+            this.RowKey = Guid.NewGuid().ToString();
+        }
+        public string URLcore { get; set; }
+        public string URLcrop { get; set; }
+        public string Name { get; set; }
     }
 }

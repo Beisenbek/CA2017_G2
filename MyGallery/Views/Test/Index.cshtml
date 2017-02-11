@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MyGallery.Models.BaseImage>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<table>
+    <tr>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @item.name
+        </td>
+        <td>
+            <img src="@item.url" /> 
+        </td>
+    </tr>
+}
+
+</table>

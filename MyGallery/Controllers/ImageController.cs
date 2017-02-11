@@ -15,13 +15,13 @@ namespace MyGallery.Controllers
 
         public ActionResult Index()
         {
-            BaseImage image = new BaseImage();
-            image.name = "KBTU";
-            image.url = @"http://www.kbtu.kz/Content/Kbtu/images/slides/main_id9.png";
-            return View(image);
+            BaseImage img = new BaseImage
+            {
+                URLcore = "https://kbtutest2.blob.core.windows.net/images/Chrysanthemum.jpg",
+                URLcrop = "https://kbtutest2.blob.core.windows.net/images/prev_c.jpg",
+                Name = "Chrysanthemum.jpg"
+            };
+            return View(img);
         }
-
-        
-
     }
 }

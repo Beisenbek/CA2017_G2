@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,7 +14,10 @@ namespace MyGallery.Models
     {
         Task<UploadedImage> CreateUploadedImage(HttpPostedFileBase file);
         Task AddImageToBlobStorageAsync(UploadedImage image);
+        List<BaseImage> GetImagesFromContainer();
+        CloudTable CreateTable();
     }
+
     /*
     public class MyImageService : IImageService
     {
@@ -32,15 +36,34 @@ namespace MyGallery.Models
 
         public ImageService()
         {
-        _imageRootPath = ConfigurationManager.AppSettings["ImageRootPath"];
-        _containerName = ConfigurationManager.AppSettings["ImagesContainer"];
-        _blobStorageConnectionString = ConfigurationManager.ConnectionStrings["BlobStorageConnectionString"].ConnectionString;
+            _imageRootPath = ConfigurationManager.AppSettings["ImageRootPath"];
+            _containerName = ConfigurationManager.AppSettings["ImagesContainer"];
+            _blobStorageConnectionString = ConfigurationManager.ConnectionStrings["BlobStorageConnectionString"].ConnectionString;
         }
 
+        public List<BaseImage>  GetImagesFromContainer()
+        {
+            var container = this.GetImagesBlobContainer();
+            List<BaseImage> res = new List<BaseImage>();
+
+            foreach (var x in container.ListBlobs())
+            {
+                CloudBlockBlob blob = (CloudBlockBlob)x;
+                string url = string.Format("{0}/{1}",_imageRootPath,blob.Name);
+                BaseImage img = new BaseImage();
+               // img.name = blob.Name;
+              //  img.url = url;
+                res.Add(img);
+            }
+
+            return res;
+        }
         public async Task<UploadedImage> CreateUploadedImage(HttpPostedFileBase file)
         {
             if ((file != null) && (file.ContentLength > 0) && !string.IsNullOrEmpty(file.FileName))
             {
+
+
                 byte[] fileBytes = new byte[file.ContentLength];
                 await file.InputStream.ReadAsync(fileBytes, 0, Convert.ToInt32(file.ContentLength));
                 return new UploadedImage
@@ -66,6 +89,24 @@ namespace MyGallery.Models
             var fileBytes = image.Data;
             await blockBlob.UploadFromByteArrayAsync(fileBytes, 0, fileBytes.Length);
         }
+
+        public CloudTable CreateTable()
+        {
+            // Retrieve the storage account from the connection string.
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(_blobStorageConnectionString);
+
+            // Create the table client.
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+
+            // Retrieve a reference to the table.
+            CloudTable table = tableClient.GetTableReference("imagetable");
+
+            // Create the table if it doesn't exist.
+            table.CreateIfNotExists();
+
+            return table;
+        }
+
         private CloudBlobContainer GetImagesBlobContainer()
         {
             // use the connection string to get the storage account
@@ -85,5 +126,7 @@ namespace MyGallery.Models
                 });
             return container;
         }
+
+
     }
 }
